@@ -26,7 +26,7 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     /*
      * Events
      */
-    event InitializedContract(address minterAddress, address pauserAddress, address reserveAddress, address indexed changerAddress, uint256 initialSupply);
+    event InitializedContract(address indexed changerAddress, uint256 initialSupply);
     event ChangedMinterAddress(address indexed minterAddress, address indexed changerAddress);
     event ChangedPauserAddress(address indexed pauserAddress, address indexed changerAddress);
     event ChangedReserveAddress(address indexed reserveAddress, address indexed changerAddress);
@@ -42,6 +42,10 @@ contract LBCToken is Context, ERC20CappedUnburnable {
         _deployingAddress = msg.sender;
     }
 
+    /*
+    ** Initializes the contract address and affects addresses to their roles.
+    ** Mints the initialSupply for ICO and send it to the reserve address which should be the ico's
+    */
     function init(
         address minterAddress,
         address pauserAddress,
@@ -52,23 +56,24 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     isNotInitialized
     onlyDeployingAddress
     {
+        require(minterAddress != address(0), "_minterAddress cannot be 0x");
         require(pauserAddress != address(0), "_pauserAddress cannot be 0x");
-        require(reserveAddress != address(0), "_pauserAddress cannot be 0x");
+        require(reserveAddress != address(0), "_reserveAddress cannot be 0x");
 
+        _minterAddress = minterAddress;
         _pauserAddress = pauserAddress;
         _reserveAddress = reserveAddress;
 
         _mint(_reserveAddress, initialSupply);
 
-        if(reserveAddress != address(0)) {
-            _minterAddress = minterAddress;
-        }
-
         initialized = true;
 
-        emit InitializedContract(minterAddress, pauserAddress, reserveAddress, _msgSender(), initialSupply);
+        emit InitializedContract(_msgSender(), initialSupply);
     }
 
+    /*
+    ** Mint function that can only be called by minter address and mints a specified amount and sends it to an address
+    */
     function mint(address to, uint256 amount)
     public
     onlyMinterAddress
@@ -76,6 +81,9 @@ contract LBCToken is Context, ERC20CappedUnburnable {
         _mint(to, amount);
     }
 
+    /*
+    ** Freeze function that stops transactions and can only be called by pauser address
+    */
     function pause()
     public
     onlyPauserAddress
@@ -83,6 +91,9 @@ contract LBCToken is Context, ERC20CappedUnburnable {
         _pause();
     }
 
+    /*
+    ** Unfreeze function that resumes transactions and can only be called by pauser address
+    */
     function unpause()
     public
     onlyPauserAddress
@@ -90,9 +101,24 @@ contract LBCToken is Context, ERC20CappedUnburnable {
         _unpause();
     }
 
+    /*
+    ** Changes the address with pause role and can only be called by previous pauser address
+    */
+    function changePauser(address newPauserAddress)
+    public
+    onlyPauserAddress
+    whenNotPaused
+    {
+        _pauserAddress = newPauserAddress;
+        emit ChangedPauserAddress(newPauserAddress, _msgSender());
+    }
+
+    /*
+    ** Changes the address with minter role and can only be called by previous minter address
+    */
     function changeMinter(address newMinterAddress)
     public
-    onlyDeployingAddress
+    onlyMinterAddress
     whenNotPaused
     {
         _minterAddress = newMinterAddress;
@@ -100,7 +126,7 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     }
 
     /*
-    ** Checks if the sender is the minter controller address.
+    ** Checks if the sender is the minter controller address
     */
     modifier onlyDeployingAddress() {
         require(msg.sender == _deployingAddress, "Only the deploying address can call this method.");
@@ -108,7 +134,7 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     }
 
     /*
-    ** Checks if the sender is the minter controller address.
+    ** Checks if the sender is the minter controller address
     */
     modifier onlyMinterAddress() {
         require(msg.sender == _minterAddress, "Only the minter address can call this method.");
@@ -116,7 +142,7 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     }
 
     /*
-    ** Checks if the sender is the pauser controller address.
+    ** Checks if the sender is the pauser controller address
     */
     modifier onlyPauserAddress() {
         require(msg.sender == _pauserAddress, "Only the pauser address can call this method.");
@@ -124,7 +150,7 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     }
 
     /*
-    ** Checks if the contract hasn't already been initialized.
+    ** Checks if the contract hasn't already been initialized
     */
     modifier isNotInitialized() {
         require(initialized == false, "Contract is already initialized.");
