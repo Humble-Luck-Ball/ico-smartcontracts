@@ -24,8 +24,8 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     address public _reserveAddress; // should be deployer then humble reserve
 
     /*
-     * Events
-     */
+    ** Events
+    */
     event InitializedContract(address indexed changerAddress, uint256 initialSupply);
     event ChangedMinterAddress(address indexed minterAddress, address indexed changerAddress);
     event ChangedPauserAddress(address indexed pauserAddress, address indexed changerAddress);
