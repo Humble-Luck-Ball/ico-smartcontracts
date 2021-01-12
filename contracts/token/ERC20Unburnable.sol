@@ -2,10 +2,10 @@
 
 pragma solidity ^0.7.0;
 
-import "../libraries/openzeppelin/GSN/Context.sol";
-import "../libraries/openzeppelin/token/ERC20/IERC20.sol";
-import "../libraries/openzeppelin/math/SafeMath.sol";
-import "../libraries/openzeppelin/utils/Address.sol";
+import "../../libraries/openzeppelin/GSN/Context.sol";
+import "../../libraries/openzeppelin/token/ERC20/IERC20.sol";
+import "../../libraries/openzeppelin/math/SafeMath.sol";
+import "../../libraries/openzeppelin/utils/Address.sol";
 
 /**
   * OpenZeppelin Erc20 implementation without _burn private method and with cap mechanism

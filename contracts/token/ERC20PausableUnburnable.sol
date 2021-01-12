@@ -3,7 +3,7 @@
 pragma solidity ^0.7.0;
 
 import "./ERC20Unburnable.sol";
-import "../libraries/openzeppelin/utils/Pausable.sol";
+import "../../libraries/openzeppelin/utils/Pausable.sol";
 
 /**
  * OpenZeppelin ERC20Pausable based on ERC20Unbernable
