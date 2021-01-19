@@ -77,8 +77,10 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     function mint(address to, uint256 amount)
     public
     onlyMinterAddress
-    virtual {
-        _mint(to, amount);
+    virtual
+    returns (bool) {
+       _mint(to, amount);
+       return true;
     }
 
     /*
