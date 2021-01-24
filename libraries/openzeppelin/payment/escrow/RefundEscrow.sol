@@ -25,11 +25,11 @@ contract RefundEscrow is ConditionalEscrow {
 
     /**
      * @dev Constructor.
-     * @param beneficiary The beneficiary of the deposits.
+     * @param beneficiaryReceived The beneficiary of the deposits.
      */
-    constructor (address payable beneficiary) {
-        require(beneficiary != address(0), "RefundEscrow: beneficiary is the zero address");
-        _beneficiary = beneficiary;
+    constructor (address payable beneficiaryReceived) {
+        require(beneficiaryReceived != address(0), "RefundEscrow: beneficiary is the zero address");
+        _beneficiary = beneficiaryReceived;
         _state = State.Active;
     }
 
