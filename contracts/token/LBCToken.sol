@@ -44,7 +44,6 @@ contract LBCToken is Context, ERC20CappedUnburnable {
 
     /*
     ** Initializes the contract address and affects addresses to their roles.
-    ** Mints the initialSupply for ICO and send it to the reserve address which should be the ico's
     */
     function init(
         address minterAddress,
@@ -63,8 +62,6 @@ contract LBCToken is Context, ERC20CappedUnburnable {
         _minterAddress = minterAddress;
         _pauserAddress = pauserAddress;
         _reserveAddress = reserveAddress;
-
-        _mint(_reserveAddress, initialSupply);
 
         initialized = true;
 
