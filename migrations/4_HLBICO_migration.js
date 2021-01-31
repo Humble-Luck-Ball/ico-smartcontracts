@@ -1,14 +1,28 @@
-const Demo = artifacts.require("HLBICO");
-const BigNumber = require("bignumber.js");
+const HLBICO = artifacts.require("HLBICO");
+const BN = require("bignumber.js");
+
+/*
+(uint256 initialRateReceived,
+        address payable walletReceived,
+        LBCToken tokenReceived,
+        uint256 openingTimeReceived,
+        uint256 closingTimeReceived,
+        uint256 capReceived,
+        uint256 goalReceived)
+*/
 
 module.exports = function (deployer) {
-  var initialRateReceived = 5 * 1000;
-  var walletReceived = "0x0"; // To change to HLB's wallet
-  var tokenReceived = "0x1"; // To change to LBC's contract address
-  var openingTimeReceived = new Date().getTime();
-  var closingTimeReceived = openingTimeReceived + 5 * 60000; // 5 minutes closing time
-  var capReceived = new BigNumber("6000000000000000000000"); // 6Million for eth = 1000€
-  var goalReceived = new BigNumber("500000000000000000000"); // 500K for eth = 1000€
+
+  var initDate = Math.floor(new Date().getTime() / 1000) + 60;
+  var endDate = initDate + 60 * 5;
+
+  var initialRateReceived = new BN(5 * 1000);
+  var walletReceived = "0xFe771D9E6C364D5CbFb29455CfFe57cB0AC58252"; // To change to HLB's wallet
+  var tokenReceived = "0x2481994096b5979bD610Ac761BcA8dc83b3b1d17"; // To change to LBC's contract address
+  var openingTimeReceived = new BN(initDate);
+  var closingTimeReceived = new BN(endDate); // 5 minutes closing time
+  var capReceived = new BN("6000000000000000000000"); // 6Million for eth = 1000€
+  var goalReceived = new BN("500000000000000000000"); // 500K for eth = 1000€
 
   deployer.deploy(HLBICO, initialRateReceived,
     walletReceived,

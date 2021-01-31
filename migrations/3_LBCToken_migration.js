@@ -1,4 +1,4 @@
-const Demo = artifacts.require("LBCToken");
+const LBCToken = artifacts.require("LBCToken");
 
 module.exports = function (deployer) {
   deployer.deploy(LBCToken, "Luck Ball Coin", "LBC");

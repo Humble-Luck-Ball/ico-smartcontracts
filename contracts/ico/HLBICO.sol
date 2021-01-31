@@ -29,6 +29,8 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     ** Events
     */
     event InitializedContract(address indexed changerAddress, address indexed whitelistingAddress);
+    event ChangedWhitelisterAddress(address indexed whitelisterAddress, address indexed changerAddress);
+    event ChangedReserveAddress(address indexed reserveAddress, address indexed changerAddress);
     event WhitelistedAdded(address indexed account);
     event WhitelistedRemoved(address indexed account);
 
@@ -74,8 +76,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     */
     function init(
         address whitelistingAddress,
-        address reserveAddress,
-        uint256 weiMaxInvestReceived
+        address reserveAddress
     )
     public
     isNotInitialized
@@ -86,7 +87,6 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
 
         _whitelistingAddress = whitelistingAddress;
         _reserveAddress = reserveAddress;
-        _weiMaxInvest = weiMaxInvestReceived;
         initialized = true;
 
         emit InitializedContract(_msgSender(), whitelistingAddress);
@@ -124,6 +124,28 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
        return _currentRate;
     }
 
+
+    /*
+    ** Changes the address with whitelisting role and can only be called by deployer
+    */
+    function changeWhitelister(address newWhitelisterAddress)
+    public
+    onlyDeployingAddress
+    {
+        _whitelistingAddress = newWhitelisterAddress;
+        emit ChangedWhitelisterAddress(newWhitelisterAddress, _msgSender());
+    }
+
+    /*
+    ** Changes the address with pause role and can only be called by deployer
+    */
+    function changeReserveAddress(address newReserveAddress)
+    public
+    onlyDeployingAddress
+    {
+        _reserveAddress = newReserveAddress;
+        emit ChangedReserveAddress(newReserveAddress, _msgSender());
+    }
 
     /**
      * @dev Escrow finalization task, called when finalize() is called.
