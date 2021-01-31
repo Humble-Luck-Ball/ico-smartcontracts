@@ -70,7 +70,7 @@ abstract contract TimedCrowdsale is CrowdsaleMint {
      * @dev Checks whether the period in which the crowdsale is open has already elapsed.
      * @return Whether crowdsale period has elapsed
      */
-    function hasClosed() public view returns (bool) {
+    function hasClosed() public view virtual returns (bool) {
         // solhint-disable-next-line not-rely-on-time
         return block.timestamp > _closingTime;
     }

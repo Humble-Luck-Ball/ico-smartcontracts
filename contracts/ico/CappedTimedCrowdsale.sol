@@ -31,6 +31,14 @@ abstract contract CappedTimedCrowdsale is TimedCrowdsale {
     }
 
     /**
+     * @dev Checks whether the period in which the crowdsale is open has already elapsed or if the cap has been reached.
+     */
+    function hasClosed() public view override returns (bool) {
+        // solhint-disable-next-line not-rely-on-time
+        return capReached() || super.hasClosed();
+    }
+
+    /**
      * @dev Checks whether the cap has been reached.
      * @return Whether the cap was reached
      */
