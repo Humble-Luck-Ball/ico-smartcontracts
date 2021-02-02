@@ -181,6 +181,11 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         RefundablePostDeliveryCrowdsale._processPurchase(beneficiary, tokenAmount);
     }
 
+    function hasClosed() public view override(TimedCrowdsale, CappedTimedCrowdsale) returns (bool) {
+        // solhint-disable-next-line not-rely-on-time
+        return CappedTimedCrowdsale.hasClosed();
+    }
+
     function isWhitelisted(address account) public view returns (bool) {
         require(account != address(0), "HLCICO: account is zero address");
         return whitelistedAddrs[account];
