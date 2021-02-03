@@ -41,9 +41,8 @@ contract("HLBICO", accounts => {
 
         let accountBalance = await ico.balanceOf(accounts[0]);
 
-        console.log(accountBalance.toString())
-
-        assert.equal(accountBalance, web3.utils.toBN("5000"), "Account's balance should be 5000 LBC");
+        // for 1eth = 1000€
+        assert.equal(accountBalance.toString(), web3.utils.toWei("4750", "ether").toString(), "Account's balance should be 4750 LBC");
     });
         
 });

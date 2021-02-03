@@ -22,7 +22,7 @@ module.exports = function (deployer) {
   var openingTimeReceived = new BN(initDate);
   var closingTimeReceived = new BN(endDate); // 5 minutes closing time
   var capReceived = new BN("6000000000000000000000"); // 6Million for eth = 1000€
-  var goalReceived = new BN("500000000000000000000"); // 500K for eth = 1000€
+  var goalReceived = new BN("300000000000000000000"); // 500K for eth = 1000€
 
   deployer.deploy(HLBICO, initialRateReceived,
     walletReceived,

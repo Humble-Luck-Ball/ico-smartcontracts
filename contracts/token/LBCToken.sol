@@ -37,7 +37,7 @@ contract LBCToken is Context, ERC20CappedUnburnable {
         string memory symbol
     )
     ERC20Unburnable(name, symbol)
-    ERC20CappedUnburnable(300000000)
+    ERC20CappedUnburnable(300000000000000000000000000)
     {
         _deployingAddress = msg.sender;
     }

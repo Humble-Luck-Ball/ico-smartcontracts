@@ -65,8 +65,8 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         CappedTimedCrowdsale(capReceived)
         RefundableCrowdsale(goalReceived) {
         _deployingAddress = msg.sender;
-        _etherTranche = 300000000000000000000; // For eth = 1000€
-        _weiMaxInvest = 10000000000000000000; // 10.000€; for eth = 1000 €
+        _etherTranche = 3000000000000000000000; // For eth = 1000€
+        _weiMaxInvest = 100000000000000000000; // 10.000€; for eth = 1000 €
         _currentRate = initialRateReceived;
         _currentWeiTranche = 0;
     }
@@ -108,12 +108,12 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
 
         if (_currentWeiTranche > _etherTranche) {
             _currentWeiTranche = _currentWeiTranche.sub(_etherTranche);
-            calculatedAmount = calculatedAmount.add(weiAmount.sub(_currentWeiTranche).mul(rate()).div(1000));
+            calculatedAmount = calculatedAmount.add(weiAmount.sub(_currentWeiTranche).mul(rate()));
             _currentRate -= 175; // coefficient for 35 tokens reduction for each tranche
-            calculatedAmount = calculatedAmount.add(_currentWeiTranche.mul(rate()).div(1000));
+            calculatedAmount = calculatedAmount.add(_currentWeiTranche.mul(rate()));
         }
         else
-            calculatedAmount = calculatedAmount.add(weiAmount.mul(rate()).div(1000));
+            calculatedAmount = calculatedAmount.add(weiAmount.mul(rate()));
 
         calculatedAmount = calculatedAmount.sub(calculatedAmount.mul(5).div(100));
 
