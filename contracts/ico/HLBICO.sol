@@ -113,7 +113,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
             calculatedAmount = calculatedAmount.add(_currentWeiTranche.mul(rate()).div(1000));
         }
         else
-            calculatedAmount.add(weiAmount.mul(rate()).div(1000));
+            calculatedAmount = calculatedAmount.add(weiAmount.mul(rate()).div(1000));
 
         calculatedAmount = calculatedAmount.sub(calculatedAmount.mul(5).div(100));
 
@@ -124,6 +124,16 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
        return _currentRate;
     }
 
+
+    /*
+    ** Changes the address of the token contract. Must only be callable by deployer
+    */
+    function changeToken(LBCToken newToken)
+    public
+    onlyDeployingAddress
+    {
+        _changeToken(newToken);
+    }
 
     /*
     ** Changes the address with whitelisting role and can only be called by deployer

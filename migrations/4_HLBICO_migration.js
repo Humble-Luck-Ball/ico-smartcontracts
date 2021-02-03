@@ -13,8 +13,8 @@ const BN = require("bignumber.js");
 
 module.exports = function (deployer) {
 
-  var initDate = Math.floor(new Date().getTime() / 1000) + 60;
-  var endDate = initDate + 60 * 5;
+  var initDate = Math.floor(new Date().getTime() / 1000) + 2;
+  var endDate = initDate + 60 * 120;
 
   var initialRateReceived = new BN(5 * 1000);
   var walletReceived = "0xFe771D9E6C364D5CbFb29455CfFe57cB0AC58252"; // To change to HLB's wallet

@@ -79,6 +79,10 @@ contract CrowdsaleMint is Context, ReentrancyGuard {
         return _token;
     }
 
+    function _changeToken(LBCToken newToken) internal {
+        _token = newToken;
+    }
+
     /**
      * @return the address where funds are collected.
      */
@@ -115,6 +119,7 @@ contract CrowdsaleMint is Context, ReentrancyGuard {
 
         // update state
         _weiRaised = _weiRaised.add(weiAmount);
+
 
         _processPurchase(beneficiary, tokens);
         emit TokensPurchased(_msgSender(), beneficiary, weiAmount, tokens);

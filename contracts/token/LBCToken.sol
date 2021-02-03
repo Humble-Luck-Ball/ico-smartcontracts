@@ -26,7 +26,7 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     /*
     ** Events
     */
-    event InitializedContract(address indexed changerAddress, uint256 initialSupply);
+    event InitializedContract(address indexed reserveAddress);
     event ChangedMinterAddress(address indexed minterAddress, address indexed changerAddress);
     event ChangedPauserAddress(address indexed pauserAddress, address indexed changerAddress);
     event ChangedReserveAddress(address indexed reserveAddress, address indexed changerAddress);
@@ -48,8 +48,7 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     function init(
         address minterAddress,
         address pauserAddress,
-        address reserveAddress,
-        uint256 initialSupply
+        address reserveAddress
     )
     public
     isNotInitialized
@@ -65,7 +64,7 @@ contract LBCToken is Context, ERC20CappedUnburnable {
 
         initialized = true;
 
-        emit InitializedContract(_msgSender(), initialSupply);
+        emit InitializedContract(reserveAddress);
     }
 
     /*
