@@ -24,7 +24,6 @@ contract("HLBICO", accounts => {
 
     it("should whitelist", async () => {
         let ico = await HLBICO.deployed();
-        let lbc = await LBCToken.deployed();
 
         await ico.addWhitelisted(accounts[0]);
 
@@ -35,7 +34,6 @@ contract("HLBICO", accounts => {
 
     it("should be able to invest", async () => {
         let ico = await HLBICO.deployed();
-        let lbc = await LBCToken.deployed();
 
         await ico.buyTokens(accounts[0], {value: web3.utils.toWei("1", "ether"), from: accounts[0]})
 
