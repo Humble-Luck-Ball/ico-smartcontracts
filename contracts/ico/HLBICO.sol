@@ -65,8 +65,8 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         CappedTimedCrowdsale(capReceived)
         RefundableCrowdsale(goalReceived) {
         _deployingAddress = msg.sender;
-        _etherTranche = 3000000000000000000000; // For eth = 1000€
-        _weiMaxInvest = 100000000000000000000; // 10.000€; for eth = 1000 €
+        _etherTranche = 300000000000000000000; // For eth = 1000€
+        _weiMaxInvest = 10000000000000000000; // 10.000€; for eth = 1000 €
         _currentRate = initialRateReceived;
         _currentWeiTranche = 0;
     }
@@ -183,6 +183,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     }
 
     function _preValidatePurchase(address beneficiary, uint256 weiAmount) internal override(TimedCrowdsale, CappedTimedCrowdsale) view {
+        require(isWhitelisted(beneficiary), "HLBICO: Account is not whitelisted");
         _dontExceedAmount(weiAmount);
         CappedTimedCrowdsale._preValidatePurchase(beneficiary, weiAmount);
     }

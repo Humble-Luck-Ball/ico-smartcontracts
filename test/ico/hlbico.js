@@ -35,12 +35,12 @@ contract("HLBICO", accounts => {
     it("should be able to invest", async () => {
         let ico = await HLBICO.deployed();
 
-        await ico.buyTokens(accounts[0], {value: web3.utils.toWei("1", "ether"), from: accounts[0]})
+        await ico.buyTokens(accounts[0], {value: web3.utils.toWei("2", "ether"), from: accounts[0]})
 
         let accountBalance = await ico.balanceOf(accounts[0]);
 
         // for 1eth = 1000€
-        assert.equal(accountBalance.toString(), web3.utils.toWei("4750", "ether").toString(), "Account's balance should be 4750 LBC");
+        assert.equal(accountBalance.toString(), web3.utils.toWei((4750 * 2).toString(), "ether").toString(), "Account's balance should be 4750 LBC");
     });
         
 });
