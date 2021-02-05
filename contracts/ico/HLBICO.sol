@@ -239,7 +239,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         _addWhitelisted(account, 1);
     }
 
-        function addWhitelistedKYC(address account) public onlyWhitelistingAddress {
+    function addWhitelistedKYC(address account) public onlyWhitelistingAddress {
         _addWhitelisted(account, 2);
     }
 
