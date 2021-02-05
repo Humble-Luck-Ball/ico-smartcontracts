@@ -249,7 +249,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
 
     function _addWhitelisted(address account, uint8 flag) internal {
         require(flag == 1 || flag == 2, "HLBICO: whitelisting flag must be 1 or 2");
-        require(isWhitelisted(account) == flag, "HLCICO: account already whitelisted");
+        require(isWhitelisted(account) < flag, "HLCICO: account already whitelisted");
         whitelistedAddrs[account] = flag;
         emit WhitelistedAdded(account);
     }

@@ -25,11 +25,21 @@ contract("HLBICO", accounts => {
     it("should whitelist", async () => {
         let ico = await HLBICO.deployed();
 
-        await ico.addWhitelisted(accounts[0]);
-
         let isWhitelisted = await ico.isWhitelisted(accounts[0]);
 
-        assert.equal(isWhitelisted, true, `Account ${accounts[0]} wasn't whitelisted properly`);
+        assert.equal(isWhitelisted.toString(), "0", `Account ${accounts[0]} was already whitelisted when it shouldn't be`);
+
+        await ico.addWhitelistedRegistered(accounts[0]);
+
+        isWhitelisted = await ico.isWhitelisted(accounts[0]);
+
+        assert.equal(isWhitelisted.toString(), "1", `Account ${accounts[0]} wasn't whitelisted properly for registered`);
+
+        await ico.addWhitelistedKYC(accounts[0]);
+
+        isWhitelisted = await ico.isWhitelisted(accounts[0]);
+
+        assert.equal(isWhitelisted.toString(), "2", `Account ${accounts[0]} wasn't whitelisted properly for KYC`);
     });
 
     it("should be able to invest", async () => {
