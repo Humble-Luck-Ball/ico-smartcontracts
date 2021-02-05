@@ -230,6 +230,18 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         return CappedTimedCrowdsale.hasClosed();
     }
 
+    function etherTranche() public view returns (uint256) {
+        return _etherTranche;
+    }
+
+    function maxKYCInvest() public view returns (uint256) {
+        return _weiMaxInvest;
+    }
+
+    function maxRegisteredInvest() public view returns (uint256) {
+        return _weiNoKYCMaxInvest;
+    }
+
     function isWhitelisted(address account) public view returns (uint8) {
         require(account != address(0), "HLCICO: account is zero address");
         return whitelistedAddrs[account];
