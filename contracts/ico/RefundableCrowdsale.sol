@@ -44,6 +44,13 @@ abstract contract RefundableCrowdsale is Context, FinalizableCrowdsale {
     }
 
     /**
+    ** Updates goal
+    */
+    function changeGoal(uint256 newGoal) internal {
+        _goal = newGoal;
+    }
+
+    /**
      * @dev Investors can claim refunds here if crowdsale is unsuccessful.
      * @param refundee Whose refund will be claimed.
      */

@@ -30,6 +30,13 @@ abstract contract CappedTimedCrowdsale is TimedCrowdsale {
         return _cap;
     }
 
+    /*
+    ** Updates cap
+    */
+    function changeCap(uint256 newCap) internal {
+        _cap = newCap;
+    }
+
     /**
      * @dev Checks whether the period in which the crowdsale is open has already elapsed or if the cap has been reached.
      */
