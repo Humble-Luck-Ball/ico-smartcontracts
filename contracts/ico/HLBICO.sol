@@ -104,7 +104,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
 
         uint256 calculatedAmount = 0;
 
-        _currentWeiTranche.add(weiAmount);
+        _currentWeiTranche = _currentWeiTranche.add(weiAmount);
 
         if (_currentWeiTranche > _etherTranche) {
             _currentWeiTranche = _currentWeiTranche.sub(_etherTranche);
