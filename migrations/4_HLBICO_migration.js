@@ -17,6 +17,7 @@ module.exports = function (deployer) {
   var endDate = initDate + 60 * 120;
 
   var initialRateReceived = new BN(5 * 1000);
+  var initialRateCoef = new BN(175);
   var walletReceived = "0xFe771D9E6C364D5CbFb29455CfFe57cB0AC58252"; // To change to HLB's wallet
   var tokenReceived = "0x2481994096b5979bD610Ac761BcA8dc83b3b1d17"; // To change to LBC's contract address
   var openingTimeReceived = new BN(initDate);
@@ -25,6 +26,7 @@ module.exports = function (deployer) {
   var goalReceived = new BN("300000000000000000000"); // 500K for eth = 1000€
 
   deployer.deploy(HLBICO, initialRateReceived,
+    initialRateCoef,
     walletReceived,
     tokenReceived,
     openingTimeReceived,
