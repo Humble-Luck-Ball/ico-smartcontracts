@@ -70,7 +70,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         CappedTimedCrowdsale(capReceived)
         RefundableCrowdsale(goalReceived) {
         _deployingAddress = msg.sender;
-        _etherTranche = 300000000000000000000; // For eth = 1000€
+        _etherTranche = 3000000000000000000; // 3eth For eth = 1000€; DANGER : Don't be a bottom and change it back to its previous value : 300000000000000000000 
         _weiMaxInvest = 10000000000000000000; // 10.000€; for eth = 1000 €
         _weiNoKYCMaxInvest = 1000000000000000000; // 1000€; for eth = 1000 €
         _currentRate = initialRateReceived;

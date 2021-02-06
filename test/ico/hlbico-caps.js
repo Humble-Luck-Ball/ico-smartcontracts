@@ -478,7 +478,7 @@ contract("HLBICO", accounts => {
         let lbc = await LBCToken.deployed();
 
         const totalSupply = await lbc.totalSupply()
-        result.equal(totalSupply.toString(), '300000000', `Our token should have 300000000 total supply`)
+        assert.equal(totalSupply.toString(), '300000000', `Our token should have 300000000 total supply`)
     })
 
     it("should let users trade their LBC tokens", async () => {
