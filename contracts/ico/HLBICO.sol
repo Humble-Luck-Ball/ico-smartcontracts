@@ -243,7 +243,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     }
 
     function isWhitelisted(address account) public view returns (uint8) {
-        require(account != address(0), "HLCICO: account is zero address");
+        require(account != address(0), "HLBICO: account is zero address");
         return _whitelistedAddrs[account];
     }
 
@@ -261,13 +261,13 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
 
     function _addWhitelisted(address account, uint8 flag) internal {
         require(flag == 1 || flag == 2, "HLBICO: whitelisting flag must be 1 or 2");
-        require(isWhitelisted(account) < flag, "HLCICO: account already whitelisted");
+        require(isWhitelisted(account) < flag, "HLBICO: account already whitelisted");
         _whitelistedAddrs[account] = flag;
         emit WhitelistedAdded(account);
     }
 
     function _removeWhitelisted(address account) internal {
-        require(isWhitelisted(account) > 0, "HLCICO: account is not whitelisted");
+        require(isWhitelisted(account) > 0, "HLBICO: account is not whitelisted");
         _whitelistedAddrs[account] = 0;
         emit WhitelistedRemoved(account);
     }
