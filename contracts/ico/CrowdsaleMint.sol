@@ -151,7 +151,7 @@ contract CrowdsaleMint is Context, ReentrancyGuard {
      * @param beneficiary Address performing the token purchase
      * @param weiAmount Value in wei involved in the purchase
      */
-    function _postValidatePurchase(address beneficiary, uint256 weiAmount) internal view {
+    function _postValidatePurchase(address beneficiary, uint256 weiAmount) internal virtual {
         // solhint-disable-previous-line no-empty-blocks
     }
 

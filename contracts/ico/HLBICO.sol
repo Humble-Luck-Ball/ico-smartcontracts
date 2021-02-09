@@ -33,17 +33,19 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     event ChangedReserveAddress(address indexed reserveAddress, address indexed changerAddress);
     event WhitelistedAdded(address indexed account);
     event WhitelistedRemoved(address indexed account);
-    event UpdatedCaps(uint256 newGoal, uint256 newCap, uint256 newTranche, uint256 newMaxInvest);
+    event UpdatedCaps(uint256 newGoal, uint256 newCap, uint256 newTranche, uint256 newMaxInvest, uint256 newRate, uint256 newRateCoef);
 
     /*
     ** Attrs
     */
     uint256 private _currentRate;
-    mapping(address => uint8) whitelistedAddrs;
-    uint256 _weiMaxInvest;
-    uint256 _weiNoKYCMaxInvest;
-    uint256 _etherTranche;
-    uint256 _currentWeiTranche; // Holds the current invested value for a tranche
+    uint256 private _rateCoef;
+    mapping(address => uint8) private _whitelistedAddrs;
+    mapping(address => uint256) private _investmentAddrs;
+    uint256 private _weiMaxInvest;
+    uint256 private _weiNoKYCMaxInvest;
+    uint256 private _etherTranche;
+    uint256 private _currentWeiTranche; // Holds the current invested value for a tranche
 
     /*
     * initialRateReceived : Number of token units a buyer gets per wei for the first investment slice. Should be 5000 (diving by 1000 for 3 decimals).
@@ -56,6 +58,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     * etherMaxInvestReceived : Maximum ether that can be invested
     */
     constructor(uint256 initialRateReceived,
+        uint256 rateCoefficientReceived,
         address payable walletReceived,
         LBCToken tokenReceived,
         uint256 openingTimeReceived,
@@ -67,10 +70,11 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         CappedTimedCrowdsale(capReceived)
         RefundableCrowdsale(goalReceived) {
         _deployingAddress = msg.sender;
-        _etherTranche = 300000000000000000000; // For eth = 1000€
+        _etherTranche = 3000000000000000000; // 3eth For eth = 1000€; DANGER : Don't be a bottom and change it back to its previous value : 300000000000000000000 
         _weiMaxInvest = 10000000000000000000; // 10.000€; for eth = 1000 €
         _weiNoKYCMaxInvest = 1000000000000000000; // 1000€; for eth = 1000 €
         _currentRate = initialRateReceived;
+        _rateCoef = rateCoefficientReceived;
         _currentWeiTranche = 0;
     }
 
@@ -149,8 +153,10 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         _etherTranche = _etherTranche.mul(coef).div(1000);
         _weiMaxInvest = _weiMaxInvest.mul(coef).div(1000);
         _weiNoKYCMaxInvest = _weiNoKYCMaxInvest.mul(coef).div(1000);
+        _currentRate = _currentRate.mul(coef).div(1000);
+        _rateCoef = _rateCoef.mul(coef).div(1000);
 
-        emit UpdatedCaps(goal(), cap(), _etherTranche, _weiMaxInvest);
+        emit UpdatedCaps(goal(), cap(), _etherTranche, _weiMaxInvest, _currentRate, _rateCoef);
     }
 
     function rate() public view override returns (uint256) {
@@ -217,8 +223,14 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
 
     function _preValidatePurchase(address beneficiary, uint256 weiAmount) internal override(TimedCrowdsale, CappedTimedCrowdsale) view {
         require(isWhitelisted(beneficiary) > 0, "HLBICO: Account is not whitelisted");
-        _dontExceedAmount(weiAmount, isWhitelisted(beneficiary));
+        _dontExceedAmount(beneficiary, weiAmount, isWhitelisted(beneficiary));
         CappedTimedCrowdsale._preValidatePurchase(beneficiary, weiAmount);
+    }
+
+    function _postValidatePurchase(address beneficiary, uint256 weiAmount) internal override {
+        require(beneficiary != address(0), "HLBICO: _postValidatePurchase benificiary is the zero address");
+
+        _investmentAddrs[beneficiary] = _investmentAddrs[beneficiary].add(weiAmount);        
     }
 
     function _processPurchase(address beneficiary, uint256 tokenAmount) internal override(CrowdsaleMint, RefundablePostDeliveryCrowdsale) {
@@ -243,8 +255,8 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     }
 
     function isWhitelisted(address account) public view returns (uint8) {
-        require(account != address(0), "HLCICO: account is zero address");
-        return whitelistedAddrs[account];
+        require(account != address(0), "HLBICO: account is zero address");
+        return _whitelistedAddrs[account];
     }
 
     function addWhitelistedRegistered(address account) public onlyWhitelistingAddress {
@@ -261,20 +273,21 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
 
     function _addWhitelisted(address account, uint8 flag) internal {
         require(flag == 1 || flag == 2, "HLBICO: whitelisting flag must be 1 or 2");
-        require(isWhitelisted(account) < flag, "HLCICO: account already whitelisted");
-        whitelistedAddrs[account] = flag;
+        require(isWhitelisted(account) < flag, "HLBICO: account already whitelisted");
+        _whitelistedAddrs[account] = flag;
         emit WhitelistedAdded(account);
     }
 
     function _removeWhitelisted(address account) internal {
-        require(isWhitelisted(account) > 0, "HLCICO: account is not whitelisted");
-        whitelistedAddrs[account] = 0;
+        require(isWhitelisted(account) > 0, "HLBICO: account is not whitelisted");
+        _whitelistedAddrs[account] = 0;
         emit WhitelistedRemoved(account);
     }
 
-    function _dontExceedAmount(uint256 weiAmount, uint8 flag) internal view {
-        require(weiAmount <= maxEtherToInvest(), "HLBICO: Cannot invest more than limit");
-        require((weiAmount > _weiNoKYCMaxInvest && flag == 2) || weiAmount <= _weiNoKYCMaxInvest, "HLBICO: Cannot invest more than NoKYC limit. User needs to pass KYC screening first.");
+    function _dontExceedAmount(address beneficiary, uint256 weiAmount, uint8 flag) internal view {
+        require((_investmentAddrs[beneficiary].add(weiAmount) < _weiMaxInvest && flag == 2)
+         || _investmentAddrs[beneficiary].add(weiAmount) <= _weiNoKYCMaxInvest,
+          "HLBICO: Cannot invest more than NoKYC limit or weiMaxInvest. User needs to pass KYC screening first.");
     }
 
     function maxEtherToInvest() public view returns (uint256) {
