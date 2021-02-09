@@ -202,7 +202,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     function _finalization() override virtual internal {
         // Mints the 5% participation and sends it to humblereserve
         if (goalReached()) {
-            _deliverTokens(_reserveAddress, weiRaised().mul(5).div(100));
+            _deliverTokens(_reserveAddress, token().totalSupply().mul(5).div(100));
         }
 
         super._finalization();
