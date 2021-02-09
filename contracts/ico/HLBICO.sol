@@ -153,8 +153,8 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         _etherTranche = _etherTranche.mul(coef).div(1000);
         _weiMaxInvest = _weiMaxInvest.mul(coef).div(1000);
         _weiNoKYCMaxInvest = _weiNoKYCMaxInvest.mul(coef).div(1000);
-        _currentRate = _currentRate.div(coef).div(1000);
-        _rateCoef = _rateCoef.div(coef).div(1000);
+        _currentRate = _currentRate.div(coef).mul(1000);
+        _rateCoef = _rateCoef.div(coef).mul(1000);
 
         emit UpdatedCaps(goal(), cap(), _etherTranche, _weiMaxInvest, _currentRate, _rateCoef);
     }
