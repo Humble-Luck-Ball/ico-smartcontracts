@@ -148,13 +148,15 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     onlyDeployingAddress {
         require(coef > 0 && coef < 10000, "HLBICO: coef isn't within range of authorized values");
 
+        uint256 coefBase = 1000;
+
         changeGoal(goal().mul(coef).div(1000));
         changeCap(cap().mul(coef).div(1000));
         _etherTranche = _etherTranche.mul(coef).div(1000);
         _weiMaxInvest = _weiMaxInvest.mul(coef).div(1000);
         _weiNoKYCMaxInvest = _weiNoKYCMaxInvest.mul(coef).div(1000);
-        _currentRate = _currentRate.sub(_currentRate.mul(coef.div(coef.div(1000))).div(1000));
-        _rateCoef = _rateCoef.sub(_rateCoef.mul(coef.div(coef.div(1000))).div(1000));
+        _currentRate = _currentRate.sub(_currentRate.mul(coefBase.mul(coefBase.div(coef))).div(1000));
+        _rateCoef = _rateCoef.sub(_rateCoef.mul(coefBase.mul(coefBase.div(coef))).div(1000));
 
         emit UpdatedCaps(goal(), cap(), _etherTranche, _weiMaxInvest, _currentRate, _rateCoef);
     }
