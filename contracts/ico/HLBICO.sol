@@ -121,12 +121,12 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
 
             if (manualSkew >= 0) {
                 calculatedAmount = calculatedAmount.add(weiAmount.sub(_currentWeiTranche).mul(rate()));
-                _currentRate -= 175; // coefficient for 35 tokens reduction for each tranche
+                _currentRate -= _rateCoef; // coefficient for 35 tokens reduction for each tranche
                 calculatedAmount = calculatedAmount.add(_currentWeiTranche.mul(rate()));
             }
             //If there is a skew between invested wei and calculated wei for a tranche
             else {
-                _currentRate -= 175; // coefficient for 35 tokens reduction for each tranche
+                _currentRate -= _rateCoef; // coefficient for 35 tokens reduction for each tranche
                 calculatedAmount = calculatedAmount.add(weiAmount.mul(rate()));
             }
         }
