@@ -46,6 +46,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     uint256 private _weiNoKYCMaxInvest;
     uint256 private _etherTranche;
     uint256 private _currentWeiTranche; // Holds the current invested value for a tranche
+    uint256 private _deliverToReserve;
 
     /*
     * initialRateReceived : Number of token units a buyer gets per wei for the first investment slice. Should be 5000 (diving by 1000 for 3 decimals).
@@ -76,6 +77,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         _currentRate = initialRateReceived;
         _rateCoef = rateCoefficientReceived;
         _currentWeiTranche = 0;
+        _deliverToReserve = 0;
     }
 
     /*
@@ -133,7 +135,10 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         else
             calculatedAmount = calculatedAmount.add(weiAmount.mul(rate()));
 
-        calculatedAmount = calculatedAmount.sub(calculatedAmount.mul(5).div(100));
+        uint256 participationAmount = calculatedAmount.mul(5).div(100);
+
+        calculatedAmount = calculatedAmount.sub(participationAmount);
+        _deliverToReserve = _deliverToReserve.add(participationAmount);
 
         return calculatedAmount;
     }
@@ -202,7 +207,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     function _finalization() override virtual internal {
         // Mints the 5% participation and sends it to humblereserve
         if (goalReached()) {
-            _deliverTokens(_reserveAddress, token().totalSupply().mul(5).div(100));
+            _deliverTokens(_reserveAddress, _deliverToReserve);
         }
 
         super._finalization();
