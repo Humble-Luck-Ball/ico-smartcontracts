@@ -165,6 +165,10 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     }
 
     function rate() public view override returns (uint256) {
+       return _currentRate.div(1000);
+    }
+
+    function currentRate() public view returns (uint256) {
        return _currentRate;
     }
 
