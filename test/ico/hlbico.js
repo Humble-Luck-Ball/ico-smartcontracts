@@ -52,5 +52,18 @@ contract("HLBICO", accounts => {
         // for 1eth = 1000€
         assert.equal(accountBalance.toString(), web3.utils.toWei((4750 * 2).toString(), "ether").toString(), "Account's balance should be 4750 LBC");
     });
+
+    it("Should adjust by 4%", async () => {
+        let ico = await HLBICO.deployed();
+
+        await ico.adjustEtherValue(new web3.utils.BN("960"))
+
+        await ico.buyTokens(accounts[0], {value: web3.utils.toWei("1", "ether"), from: accounts[0]})
+
+        let accountBalance = await ico.balanceOf(accounts[0]);
+
+        // for 1eth = 1000€
+        assert.equal(accountBalance.toString(), web3.utils.toWei((4940 * 1 + (4750 * 2)).toString(), "ether").toString(), "Account's balance should be 9500 LBC");
+    });
         
 });
