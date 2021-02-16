@@ -14,7 +14,7 @@ const BN = require("bignumber.js");
 module.exports = function (deployer) {
 
   var initDate = Math.floor(new Date().getTime() / 1000) + 5;
-  var endDate = initDate + 60 * 1; // 60 seconds * 2 minutes
+  var endDate = initDate + 60 * 60 * 24; // 60 seconds * 60 mins * 24 hrs
 
   var initialRateReceived = new BN(5 * 1000);
   var initialRateCoefReceived = new BN(175);
