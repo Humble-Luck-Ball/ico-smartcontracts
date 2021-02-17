@@ -33,6 +33,8 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     event ChangedReserveAddress(address indexed reserveAddress, address indexed changerAddress);
     event WhitelistedAdded(address indexed account);
     event WhitelistedRemoved(address indexed account);
+    event BlacklistedAdded(address indexed account);
+    event BlacklistedRemoved(address indexed account);
     event UpdatedCaps(uint256 newGoal, uint256 newCap, uint256 newTranche, uint256 newMaxInvest, uint256 newRate, uint256 newRateCoef);
 
     /*
@@ -41,12 +43,14 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     uint256 private _currentRate;
     uint256 private _rateCoef;
     mapping(address => uint8) private _whitelistedAddrs;
+    mapping(address => bool) private _blacklistedAddrs;
     mapping(address => uint256) private _investmentAddrs;
     uint256 private _weiMaxInvest;
     uint256 private _weiNoKYCMaxInvest;
     uint256 private _etherTranche;
     uint256 private _currentWeiTranche; // Holds the current invested value for a tranche
     uint256 private _deliverToReserve;
+    uint256 private _minimumInvest;
 
     /*
     * initialRateReceived : Number of token units a buyer gets per wei for the first investment slice. Should be 5000 (diving by 1000 for 3 decimals).
@@ -78,6 +82,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         _rateCoef = rateCoefficientReceived;
         _currentWeiTranche = 0;
         _deliverToReserve = 0;
+        _minimumInvest = 1000000000000000; // 1€; for eth = 1000€
     }
 
     /*
@@ -222,6 +227,15 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         super._finalization();
     }
 
+    /*
+    ** Checks if an adress has been blacklisted before letting them withdraw their funds
+    */
+    function withdrawTokens(address beneficiary) override virtual public {
+        require(!isBlacklisted(beneficiary), "HLBICO: account is blacklisted");
+
+        super.withdrawTokens(beneficiary);
+    }
+
     /**
      * @dev Overrides parent method taking into account variable rate.
      * @param weiAmount The value in wei to be converted into tokens
@@ -236,7 +250,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     }
 
     function _preValidatePurchase(address beneficiary, uint256 weiAmount) internal override(TimedCrowdsale, CappedTimedCrowdsale) view {
-        require(isWhitelisted(beneficiary) > 0, "HLBICO: Account is not whitelisted");
+        require(weiAmount >= _minimumInvest, "HLBICO: Investment must be greater than or equal to 0.001 eth");
         _dontExceedAmount(beneficiary, weiAmount, isWhitelisted(beneficiary));
         CappedTimedCrowdsale._preValidatePurchase(beneficiary, weiAmount);
     }
@@ -296,6 +310,31 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         require(isWhitelisted(account) > 0, "HLBICO: account is not whitelisted");
         _whitelistedAddrs[account] = 0;
         emit WhitelistedRemoved(account);
+    }
+
+    function addBlacklisted(address account) public onlyWhitelistingAddress {
+        _addBlacklisted(account);
+    }
+
+    function removeBlacklisted(address account) public onlyWhitelistingAddress {
+        _removeBlacklisted(account);
+    }
+
+    function isBlacklisted(address account) public view returns (bool) {
+        require(account != address(0), "HLBICO: account is zero address");
+        return _blacklistedAddrs[account];
+    }
+
+    function _addBlacklisted(address account) internal {
+        require(!isBlacklisted(account), "HLBICO: account already blacklisted");
+        _blacklistedAddrs[account] = true;
+        emit BlacklistedAdded(account);
+    }
+
+    function _removeBlacklisted(address account) internal {
+        require(isBlacklisted(account), "HLBICO: account is not blacklisted");
+        _blacklistedAddrs[account] = true;
+        emit BlacklistedRemoved(account);
     }
 
     function _dontExceedAmount(address beneficiary, uint256 weiAmount, uint8 flag) internal view {
