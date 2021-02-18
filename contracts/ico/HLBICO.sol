@@ -33,7 +33,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     event ChangedReserveAddress(address indexed reserveAddress, address indexed changerAddress);
     event BlacklistedAdded(address indexed account);
     event BlacklistedRemoved(address indexed account);
-    event UpdatedCaps(uint256 newGoal, uint256 newCap, uint256 newTranche, uint256 newMaxInvest, uint256 newRate, uint256 newRateCoef);
+    event UpdatedCaps(uint256 newGoal, uint256 newCap);
 
     /*
     ** Attrs
@@ -71,13 +71,13 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         CappedTimedCrowdsale(capReceived)
         RefundableCrowdsale(goalReceived) {
         _deployingAddress = msg.sender;
-        _etherTranche = 3000000000000000000; // 3eth For eth = 1000€; DANGER : Don't be a bottom and change it back to its previous value : 300000000000000000000 
-        _weiMaxInvest = 10000000000000000000; // 10.000€; for eth = 1000 €
+        _etherTranche = 2000000000000000000; // 2eth For eth = 1500€; DANGER : Don't be a bottom and change it back to its previous value : 300000000000000000000 
+        _weiMaxInvest = 6660000000000000000; // 9990€; for eth = 1500 €
         _currentRate = initialRateReceived;
         _rateCoef = rateCoefficientReceived;
         _currentWeiTranche = 0;
         _deliverToReserve = 0;
-        _minimumInvest = 1000000000000000; // 1€; for eth = 1000€
+        _minimumInvest = 1000000000000000; // 1.5€; for eth = 1500€
     }
 
     /*
@@ -117,20 +117,9 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
 
         if (_currentWeiTranche > _etherTranche) {
             _currentWeiTranche = _currentWeiTranche.sub(_etherTranche);
-
-            //If we updated the tranche manually to a smaller one
-            uint256 manualSkew = weiAmount.sub(_currentWeiTranche);
-
-            if (manualSkew >= 0) {
-                calculatedAmount = calculatedAmount.add(weiAmount.sub(_currentWeiTranche).mul(rate()));
-                _currentRate -= _rateCoef; // coefficient for 35 tokens reduction for each tranche
-                calculatedAmount = calculatedAmount.add(_currentWeiTranche.mul(rate()));
-            }
-            //If there is a skew between invested wei and calculated wei for a tranche
-            else {
-                _currentRate -= _rateCoef; // coefficient for 35 tokens reduction for each tranche
-                calculatedAmount = calculatedAmount.add(weiAmount.mul(rate()));
-            }
+            calculatedAmount = calculatedAmount.add(weiAmount.sub(_currentWeiTranche).mul(rate()));
+            _currentRate -= _rateCoef;
+            calculatedAmount = calculatedAmount.add(_currentWeiTranche.mul(rate()));
         }
         else
             calculatedAmount = calculatedAmount.add(weiAmount.mul(rate()));
@@ -144,33 +133,15 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     }
 
     /*
-    ** Adjusts all parameters influenced by Ether value based on a percentage coefficient
-    ** coef is based on 4 digits for decimal representation with 1 precision
-    ** i.e : 934 -> 93.4%; 1278 -> 127.8%
+    ** Adjusts SoftCap Goal and Hardcap
     */
-    function adjustEtherValue(uint256 coef)
+    function adjustEtherValue(uint256 newGoal, uint256 newCap)
     public
     onlyDeployingAddress {
-        require(coef > 0 && coef < 10000, "HLBICO: coef isn't within range of authorized values");
+        changeGoal(newGoal);
+        changeCap(newCap);
 
-        uint256 baseCoef = 1000;
-
-        changeGoal(goal().mul(coef).div(1000));
-        changeCap(cap().mul(coef).div(1000));
-        _etherTranche = _etherTranche.mul(coef).div(1000);
-        _weiMaxInvest = _weiMaxInvest.mul(coef).div(1000);
-        
-        if (coef > 1000) {
-            coef = coef.sub(1000);
-            _currentRate = _currentRate.sub(_currentRate.mul(coef).div(1000));
-            _rateCoef = _rateCoef.sub(_rateCoef.mul(coef).div(1000));
-        } else {
-            coef = baseCoef.sub(coef);
-            _currentRate = _currentRate.add(_currentRate.mul(coef).div(1000));
-            _rateCoef = _rateCoef.add(_rateCoef.mul(coef).div(1000));
-        }
-
-        emit UpdatedCaps(goal(), cap(), _etherTranche, _weiMaxInvest, _currentRate, _rateCoef);
+        emit UpdatedCaps(goal(), cap());
     }
 
     function rate() public view override returns (uint256) {
