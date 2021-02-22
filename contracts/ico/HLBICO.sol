@@ -177,6 +177,10 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
        return _currentRate;
     }
 
+    function getNextRate() public view returns (uint256) {
+        return _currentRate.sub(_rateCoef);
+    }
+
     /*
     ** Changes the address of the token contract. Must only be callable by deployer
     */
