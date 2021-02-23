@@ -104,7 +104,7 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     */
     function changePauser(address newPauserAddress)
     public
-    onlyPauserAddress
+    onlyDeployingAddress
     whenNotPaused
     {
         _pauserAddress = newPauserAddress;
@@ -116,7 +116,7 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     */
     function changeMinter(address newMinterAddress)
     public
-    onlyMinterAddress
+    onlyDeployingAddress
     whenNotPaused
     {
         _minterAddress = newMinterAddress;
