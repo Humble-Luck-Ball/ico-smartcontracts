@@ -31,6 +31,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     event InitializedContract(address indexed changerAddress, address indexed whitelistingAddress);
     event ChangedWhitelisterAddress(address indexed whitelisterAddress, address indexed changerAddress);
     event ChangedReserveAddress(address indexed reserveAddress, address indexed changerAddress);
+    event ChangeDeployerAddress(address indexed deployerAddress, address indexed changerAddress);
     event BlacklistedAdded(address indexed account);
     event BlacklistedRemoved(address indexed account);
     event UpdatedCaps(uint256 newGoal, uint256 newCap, uint256 newTranche, uint256 newMaxInvest, uint256 newRate, uint256 newRateCoef);
@@ -71,13 +72,13 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         CappedTimedCrowdsale(capReceived)
         RefundableCrowdsale(goalReceived) {
         _deployingAddress = msg.sender;
-        _etherTranche = 2000000000000000000; // 2eth For eth = 1500€; DANGER : Don't be a bottom and change it back to its previous value : 300000000000000000000 
-        _weiMaxInvest = 6660000000000000000; // 9990€; for eth = 1500 €
+        _etherTranche = 234375000000000000000; // 300000€; For eth = 1280 €
+        _weiMaxInvest = 781250000000000000000; // 10000€; for eth = 1280 €
         _currentRate = initialRateReceived;
         _rateCoef = rateCoefficientReceived;
         _currentWeiTranche = 0;
         _deliverToReserve = 0;
-        _minimumInvest = 1000000000000000; // 1.5€; for eth = 1500€
+        _minimumInvest = 1000000000000000; // 1.28€; for eth = 1500€
     }
 
     /*
@@ -200,6 +201,17 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     {
         _whitelistingAddress = newWhitelisterAddress;
         emit ChangedWhitelisterAddress(newWhitelisterAddress, _msgSender());
+    }
+    
+    /*
+    ** Changes the address with deployer role and can only be called by deployer
+    */
+    function changeDeployer(address newDeployerAddress)
+    public
+    onlyDeployingAddress
+    {
+        _deployingAddress = newDeployerAddress;
+        emit ChangeDeployerAddress(_deployingAddress, _msgSender());
     }
 
     /*

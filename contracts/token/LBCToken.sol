@@ -18,10 +18,10 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     /*
     ** Addresses
     */
-    address public _deployingAddress; // should remain the same as deployer's address
-    address public _pauserAddress; // should be ico's address then deployer's
+    address public _deployingAddress; // should be changed to multisig contract address
+    address public _pauserAddress; // should be deployer's
     address public _minterAddress; // should be ico's address then poe's
-    address public _reserveAddress; // should be deployer then humble reserve
+    address public _reserveAddress; // should be multisig then humble reserve
 
     /*
     ** Events
@@ -30,6 +30,7 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     event ChangedMinterAddress(address indexed minterAddress, address indexed changerAddress);
     event ChangedPauserAddress(address indexed pauserAddress, address indexed changerAddress);
     event ChangedReserveAddress(address indexed reserveAddress, address indexed changerAddress);
+    event ChangeDeployerAddress(address indexed deployerAddress, address indexed changerAddress);
 
 
     constructor(
@@ -121,6 +122,17 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     {
         _minterAddress = newMinterAddress;
         emit ChangedMinterAddress(newMinterAddress, _msgSender());
+    }
+
+    /*
+    ** Changes the address with deployer role and can only be called by deployer
+    */
+    function changeDeployer(address newDeployerAddress)
+    public
+    onlyDeployingAddress
+    {
+        _deployingAddress = newDeployerAddress;
+        emit ChangeDeployerAddress(_deployingAddress, _msgSender());
     }
 
     /*
