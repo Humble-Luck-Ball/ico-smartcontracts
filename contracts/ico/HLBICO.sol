@@ -31,7 +31,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     event InitializedContract(address indexed changerAddress, address indexed whitelistingAddress);
     event ChangedWhitelisterAddress(address indexed whitelisterAddress, address indexed changerAddress);
     event ChangedReserveAddress(address indexed reserveAddress, address indexed changerAddress);
-    event ChangeDeployerAddress(address indexed deployerAddress, address indexed changerAddress);
+    event ChangedDeployerAddress(address indexed deployerAddress, address indexed changerAddress);
     event BlacklistedAdded(address indexed account);
     event BlacklistedRemoved(address indexed account);
     event UpdatedCaps(uint256 newGoal, uint256 newCap, uint256 newTranche, uint256 newMaxInvest, uint256 newRate, uint256 newRateCoef);
@@ -211,7 +211,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     onlyDeployingAddress
     {
         _deployingAddress = newDeployerAddress;
-        emit ChangeDeployerAddress(_deployingAddress, _msgSender());
+        emit ChangedDeployerAddress(_deployingAddress, _msgSender());
     }
 
     /*

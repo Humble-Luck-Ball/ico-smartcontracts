@@ -30,7 +30,7 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     event ChangedMinterAddress(address indexed minterAddress, address indexed changerAddress);
     event ChangedPauserAddress(address indexed pauserAddress, address indexed changerAddress);
     event ChangedReserveAddress(address indexed reserveAddress, address indexed changerAddress);
-    event ChangeDeployerAddress(address indexed deployerAddress, address indexed changerAddress);
+    event ChangedDeployerAddress(address indexed deployerAddress, address indexed changerAddress);
 
 
     constructor(
@@ -132,7 +132,7 @@ contract LBCToken is Context, ERC20CappedUnburnable {
     onlyDeployingAddress
     {
         _deployingAddress = newDeployerAddress;
-        emit ChangeDeployerAddress(_deployingAddress, _msgSender());
+        emit ChangedDeployerAddress(_deployingAddress, _msgSender());
     }
 
     /*
