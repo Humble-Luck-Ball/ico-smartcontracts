@@ -73,7 +73,7 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
         RefundableCrowdsale(goalReceived) {
         _deployingAddress = msg.sender;
         _etherTranche = 234375000000000000000; // 300000€; For eth = 1280 €
-        _weiMaxInvest = 781250000000000000000; // 10000€; for eth = 1280 €
+        _weiMaxInvest = 78125000000000000000; // 10000€; for eth = 1280 €
         _currentRate = initialRateReceived;
         _rateCoef = rateCoefficientReceived;
         _currentWeiTranche = 0;
@@ -316,10 +316,6 @@ contract HLBICO is CappedTimedCrowdsale, RefundablePostDeliveryCrowdsale {
     function _dontExceedAmount(address beneficiary, uint256 weiAmount) internal view {
         require(_investmentAddrs[beneficiary].add(weiAmount) <= _weiMaxInvest,
           "HLBICO: Cannot invest more than KYC limit.");
-    }
-
-    function maxEtherToInvest() public view returns (uint256) {
-        return _weiMaxInvest;
     }
 
     modifier onlyWhitelistingAddress() {
